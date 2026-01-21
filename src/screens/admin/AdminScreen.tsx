@@ -478,12 +478,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    gap: spacing.xs,
   },
   roleIndicator: {
     width: 6,
     height: 6,
     borderRadius: 3,
+    marginRight: spacing.xs,
   },
   roleText: {
     fontSize: fontSize.xs,
@@ -492,8 +492,10 @@ const styles = StyleSheet.create({
   userSites: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
     marginBottom: spacing.sm,
+  },
+  sitesIcon: {
+    marginRight: spacing.xs,
   },
   sitesText: {
     flex: 1,
@@ -502,7 +504,6 @@ const styles = StyleSheet.create({
   },
   userActions: {
     flexDirection: 'row',
-    gap: spacing.sm,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     paddingTop: spacing.sm,
@@ -513,10 +514,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
     backgroundColor: colors.surfaceElevated,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
+    marginRight: spacing.sm,
+  },
+  actionButtonLast: {
+    marginRight: 0,
+  },
+  actionIcon: {
+    marginRight: spacing.xs,
   },
   actionText: {
     fontSize: fontSize.sm,
@@ -577,7 +584,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     marginBottom: spacing.sm,
     backgroundColor: colors.surfaceElevated,
-    gap: spacing.sm,
   },
   roleOptionSelected: {
     backgroundColor: `${colors.primary}15`,
@@ -588,6 +594,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
+    marginRight: spacing.sm,
   },
   roleOptionText: {
     flex: 1,
@@ -602,10 +609,12 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     marginBottom: spacing.sm,
     backgroundColor: colors.surfaceElevated,
-    gap: spacing.sm,
   },
   siteOptionSelected: {
     backgroundColor: `${colors.success}15`,
+  },
+  siteCheckbox: {
+    marginRight: spacing.sm,
   },
   siteOptionInfo: {
     flex: 1,

@@ -114,7 +114,7 @@ export function AlertsListScreen() {
 
           <View style={styles.alertFooter}>
             <View style={styles.creatorInfo}>
-              <Ionicons name="person-circle" size={16} color={colors.textMuted} />
+              <Ionicons name="person-circle" size={16} color={colors.textMuted} style={styles.creatorIcon} />
               <Text style={styles.alertCreator}>
                 {item.created_by_profile?.first_name || 'Utilisateur'}{' '}
                 {item.created_by_profile?.last_name || ''}
@@ -122,7 +122,7 @@ export function AlertsListScreen() {
             </View>
             {item.photos && item.photos.length > 0 && (
               <View style={styles.photoBadge}>
-                <Ionicons name="images" size={14} color={colors.textSecondary} />
+                <Ionicons name="images" size={14} color={colors.textSecondary} style={styles.photoIcon} />
                 <Text style={styles.photoCount}>{item.photos.length}</Text>
               </View>
             )}
@@ -277,13 +277,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    gap: spacing.xs,
   },
   acknowledgedDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: colors.success,
+    marginRight: spacing.xs,
   },
   acknowledgedText: {
     color: colors.success,
@@ -314,7 +314,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+  },
+  creatorIcon: {
+    marginRight: spacing.xs,
   },
   alertCreator: {
     fontSize: fontSize.xs,
@@ -323,12 +325,14 @@ const styles = StyleSheet.create({
   photoBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
     marginRight: spacing.sm,
     backgroundColor: colors.surfaceElevated,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.sm,
+  },
+  photoIcon: {
+    marginRight: spacing.xs,
   },
   photoCount: {
     fontSize: fontSize.xs,

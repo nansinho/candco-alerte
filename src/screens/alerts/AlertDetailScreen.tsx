@@ -458,8 +458,10 @@ const styles = StyleSheet.create({
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing.sm,
+  },
+  infoIcon: {
+    marginRight: spacing.sm,
   },
   infoText: {
     flex: 1,
@@ -487,7 +489,6 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: spacing.md,
     marginTop: spacing.lg,
   },
   acknowledgeButton: {
@@ -495,20 +496,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
     backgroundColor: colors.warning,
     padding: spacing.md,
     borderRadius: borderRadius.md,
+    marginRight: spacing.md,
   },
   resolveButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
     backgroundColor: colors.success,
     padding: spacing.md,
     borderRadius: borderRadius.md,
+  },
+  buttonIcon: {
+    marginRight: spacing.sm,
   },
   actionButtonText: {
     color: colors.surface,
@@ -578,7 +581,6 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: spacing.sm,
     backgroundColor: colors.surface,
     padding: spacing.sm,
     borderRadius: borderRadius.lg,
@@ -592,6 +594,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
+    marginRight: spacing.sm,
   },
   sendButton: {
     backgroundColor: colors.primary,

@@ -310,7 +310,7 @@ export function LoginScreen() {
                 ) : (
                   <>
                     <Text style={styles.buttonText}>Se connecter</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
+                    <Ionicons name="arrow-forward" size={20} color="#FFFFFF" style={styles.buttonIcon} />
                   </>
                 )}
               </LinearGradient>
@@ -402,10 +402,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   form: {
-    gap: spacing.lg,
+    // gap replaced with margin for iOS compatibility
   },
   inputContainer: {
-    gap: spacing.xs,
+    marginBottom: spacing.lg,
   },
   label: {
     fontSize: fontSize.sm,
@@ -422,6 +422,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
     height: 56,
+    marginTop: spacing.xs,
   },
   inputWrapperFocused: {
     borderColor: colors.primary,
@@ -449,7 +450,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: spacing.md + 2,
-    gap: spacing.sm,
+  },
+  buttonIcon: {
+    marginLeft: spacing.sm,
   },
   buttonDisabled: {
     opacity: 0.7,

@@ -92,7 +92,7 @@ export function ProfileScreen() {
         {/* Sites Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="business" size={18} color={colors.primary} />
+            <Ionicons name="business" size={18} color={colors.primary} style={styles.sectionIcon} />
             <Text style={styles.sectionTitle}>Mes sites</Text>
           </View>
           <View style={styles.card}>
@@ -119,7 +119,7 @@ export function ProfileScreen() {
               ))
             ) : (
               <View style={styles.emptyState}>
-                <Ionicons name="alert-circle-outline" size={32} color={colors.textMuted} />
+                <Ionicons name="alert-circle-outline" size={32} color={colors.textMuted} style={styles.emptyIcon} />
                 <Text style={styles.noSites}>Aucun site assigné</Text>
                 <Text style={styles.noSitesHint}>Contactez votre administrateur</Text>
               </View>
@@ -130,7 +130,7 @@ export function ProfileScreen() {
         {/* Contact Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="call" size={18} color={colors.success} />
+            <Ionicons name="call" size={18} color={colors.success} style={styles.sectionIcon} />
             <Text style={styles.sectionTitle}>Contact</Text>
           </View>
           <View style={styles.card}>
@@ -152,7 +152,7 @@ export function ProfileScreen() {
         {/* Settings Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="settings" size={18} color={colors.accent} />
+            <Ionicons name="settings" size={18} color={colors.accent} style={styles.sectionIcon} />
             <Text style={styles.sectionTitle}>Paramètres</Text>
           </View>
           <View style={styles.card}>
@@ -201,7 +201,7 @@ export function ProfileScreen() {
           activeOpacity={0.7}
         >
           <View style={styles.signOutContent}>
-            <Ionicons name="log-out-outline" size={22} color={colors.error} />
+            <Ionicons name="log-out-outline" size={22} color={colors.error} style={styles.signOutIcon} />
             <Text style={styles.signOutText}>Déconnexion</Text>
           </View>
         </TouchableOpacity>
@@ -266,12 +266,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
-    gap: spacing.xs,
   },
   roleIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
+    marginRight: spacing.xs,
   },
   roleText: {
     fontSize: fontSize.sm,
@@ -284,9 +284,11 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing.sm,
     marginLeft: spacing.xs,
+  },
+  sectionIcon: {
+    marginRight: spacing.sm,
   },
   sectionTitle: {
     fontSize: fontSize.sm,
@@ -306,11 +308,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    gap: spacing.sm,
-  },
-  siteItemBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   siteIconWrapper: {
     width: 36,
@@ -319,6 +316,11 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.primary}15`,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: spacing.sm,
+  },
+  siteItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   siteInfo: {
     flex: 1,
@@ -336,12 +338,15 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     padding: spacing.xl,
-    gap: spacing.xs,
+  },
+  emptyIcon: {
+    marginBottom: spacing.xs,
   },
   noSites: {
     fontSize: fontSize.md,
     color: colors.textSecondary,
     fontWeight: '500',
+    marginBottom: spacing.xs,
   },
   noSitesHint: {
     fontSize: fontSize.sm,
@@ -351,7 +356,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    gap: spacing.sm,
   },
   contactIconWrapper: {
     width: 36,
@@ -360,6 +364,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${colors.success}15`,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: spacing.sm,
   },
   contactText: {
     fontSize: fontSize.md,
@@ -374,7 +379,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    gap: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
@@ -387,6 +391,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: spacing.sm,
   },
   menuItemText: {
     flex: 1,
@@ -407,8 +412,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
     padding: spacing.md,
+  },
+  signOutIcon: {
+    marginRight: spacing.sm,
   },
   signOutText: {
     fontSize: fontSize.md,

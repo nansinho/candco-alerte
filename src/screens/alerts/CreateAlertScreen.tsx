@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
   typeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
     justifyContent: 'space-between',
   },
   typeCard: {
@@ -407,6 +406,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     alignItems: 'center',
     borderWidth: 2,
+    marginBottom: spacing.md,
   },
   typeIconContainer: {
     width: 64,
@@ -482,11 +482,12 @@ const styles = StyleSheet.create({
   photosContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
     marginTop: spacing.sm,
   },
   photoWrapper: {
     position: 'relative',
+    marginRight: spacing.md,
+    marginBottom: spacing.md,
   },
   photo: {
     width: 80,
@@ -517,7 +518,6 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    gap: spacing.md,
     marginTop: spacing.xxl,
     marginBottom: spacing.lg,
   },
@@ -527,6 +527,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
+    marginRight: spacing.md,
     alignItems: 'center',
   },
   backButtonText: {

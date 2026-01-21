@@ -39,7 +39,7 @@ export function AlertSentScreen() {
         </Text>
 
         <View style={styles.infoBox}>
-          <Ionicons name="information-circle" size={24} color={colors.info} />
+          <Ionicons name="information-circle" size={24} color={colors.info} style={styles.infoIcon} />
           <Text style={styles.infoText}>
             Les secouristes (SST) et responsables de site ont été notifiés. Restez calme et suivez les consignes de sécurité.
           </Text>
@@ -97,7 +97,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     padding: spacing.md,
     marginBottom: spacing.xxl,
-    gap: spacing.sm,
+  },
+  infoIcon: {
+    marginRight: spacing.sm,
   },
   infoText: {
     flex: 1,
@@ -107,13 +109,13 @@ const styles = StyleSheet.create({
   },
   buttons: {
     width: '100%',
-    gap: spacing.md,
   },
   primaryButton: {
     backgroundColor: colors.primary,
     padding: spacing.md,
     borderRadius: borderRadius.md,
     alignItems: 'center',
+    marginBottom: spacing.md,
   },
   primaryButtonText: {
     color: colors.surface,

@@ -262,7 +262,7 @@ export function SOSScreen() {
           </View>
           {currentLocation && (
             <View style={styles.gpsBadge}>
-              <Ionicons name="location" size={14} color={colors.success} />
+              <Ionicons name="location" size={14} color={colors.success} style={styles.gpsIcon} />
               <Text style={styles.gpsText}>GPS</Text>
             </View>
           )}
@@ -345,7 +345,7 @@ export function SOSScreen() {
 
           {/* Hold time indicator */}
           <View style={styles.holdTimeContainer}>
-            <Ionicons name="time-outline" size={16} color={colors.textTertiary} />
+            <Ionicons name="time-outline" size={16} color={colors.textTertiary} style={styles.holdTimeIcon} />
             <Text style={styles.holdTimeText}>2.5 secondes</Text>
           </View>
         </View>
@@ -408,9 +408,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
-    gap: 4,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  gpsIcon: {
+    marginRight: 4,
   },
   gpsText: {
     fontSize: fontSize.xs,
@@ -507,9 +509,11 @@ const styles = StyleSheet.create({
   holdTimeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
     marginTop: spacing.xl,
     opacity: 0.6,
+  },
+  holdTimeIcon: {
+    marginRight: spacing.xs,
   },
   holdTimeText: {
     fontSize: fontSize.sm,

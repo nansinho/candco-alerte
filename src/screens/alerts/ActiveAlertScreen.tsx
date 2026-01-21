@@ -243,8 +243,10 @@ const styles = StyleSheet.create({
   locationContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing.xs,
+  },
+  locationIcon: {
+    marginRight: spacing.sm,
   },
   siteName: {
     fontSize: fontSize.xxl,
@@ -287,11 +289,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.md,
     backgroundColor: colors.surface,
     padding: spacing.lg,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
+  },
+  viewButtonIcon: {
+    marginRight: spacing.md,
   },
   viewButtonText: {
     fontSize: fontSize.lg,

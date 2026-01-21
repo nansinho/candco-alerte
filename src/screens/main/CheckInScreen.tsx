@@ -390,12 +390,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
     backgroundColor: 'rgba(0,0,0,0.2)',
     padding: spacing.md,
     borderRadius: borderRadius.lg,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+  },
+  checkOutIcon: {
+    marginRight: spacing.sm,
   },
   checkOutButtonText: {
     color: '#FFFFFF',
@@ -408,9 +410,11 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing.sm,
     paddingHorizontal: spacing.xs,
+  },
+  sectionIcon: {
+    marginRight: spacing.sm,
   },
   sectionTitle: {
     fontSize: fontSize.sm,
@@ -527,7 +531,6 @@ const styles = StyleSheet.create({
   activeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
     marginTop: spacing.xs,
   },
   activeDot: {
@@ -535,6 +538,7 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     backgroundColor: colors.success,
+    marginRight: spacing.xs,
   },
   activeLabel: {
     fontSize: fontSize.xs,
