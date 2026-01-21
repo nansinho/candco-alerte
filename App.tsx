@@ -60,39 +60,6 @@ function AppContent() {
       await Notifications.setNotificationChannelAsync('alerts', {
         name: 'Alertes d\'urgence',
         importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 200, 500],
-        lightColor: '#FF0000',
-        enableVibrate: true,
-        enableLights: true,
-      });
-
-      // Create channels for each alert type
-      await Notifications.setNotificationChannelAsync('alert-fire', {
-        name: 'Alertes Incendie',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 200, 500, 200, 500],
-        lightColor: '#EF4444',
-      });
-
-      await Notifications.setNotificationChannelAsync('alert-accident', {
-        name: 'Alertes Accident',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 200, 500],
-        lightColor: '#F59E0B',
-      });
-
-      await Notifications.setNotificationChannelAsync('alert-medical', {
-        name: 'Alertes Médicales',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 500, 200, 500],
-        lightColor: '#3B82F6',
-      });
-
-      await Notifications.setNotificationChannelAsync('alert-other', {
-        name: 'Autres Alertes',
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 500, 200, 500],
-        lightColor: '#6B7280',
       });
     }
 
