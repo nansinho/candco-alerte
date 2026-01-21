@@ -20,6 +20,7 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { SOSScreen } from '../screens/main/SOSScreen';
 import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { CheckInScreen } from '../screens/main/CheckInScreen';
+import { AdminScreen } from '../screens/admin/AdminScreen';
 
 // Alert screens
 import { AlertsListScreen } from '../screens/alerts/AlertsListScreen';
@@ -46,6 +47,7 @@ export type TabParamList = {
   SOS: undefined;
   Alerts: undefined;
   CheckIn: undefined;
+  Admin: undefined;
   Profile: undefined;
 };
 
@@ -68,6 +70,9 @@ function MainTabs() {
               break;
             case 'CheckIn':
               iconName = focused ? 'location' : 'location-outline';
+              break;
+            case 'Admin':
+              iconName = focused ? 'settings' : 'settings-outline';
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
@@ -123,6 +128,11 @@ function MainTabs() {
         name="CheckIn"
         component={CheckInScreen}
         options={{ tabBarLabel: 'Check-in' }}
+      />
+      <Tab.Screen
+        name="Admin"
+        component={AdminScreen}
+        options={{ tabBarLabel: 'Admin' }}
       />
       <Tab.Screen
         name="Profile"
