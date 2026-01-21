@@ -3,10 +3,11 @@ import { NavigationContainer, NavigationContainerRef } from '@react-navigation/n
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 import { useAuthStore } from '../store/authStore';
-import { colors } from '../constants/theme';
+import { colors, shadows } from '../constants/theme';
 import { AlertType } from '../types/database';
 
 // Navigation ref for external navigation
@@ -75,17 +76,38 @@ function MainTabs() {
               iconName = 'help-outline';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <View style={focused ? styles.tabIconActive : undefined}>
+              <Ionicons name={iconName} size={size} color={color} />
+            </View>
+          );
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
+          backgroundColor: colors.surface,
           borderTopWidth: 1,
           borderTopColor: colors.border,
-          backgroundColor: colors.surface,
+          paddingTop: 8,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          height: Platform.OS === 'ios' ? 88 : 64,
+          ...shadows.sm,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 4,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 4,
         },
         headerShown: false,
       })}
+      screenListeners={{
+        tabPress: () => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        },
+      }}
     >
       <Tab.Screen
         name="SOS"
@@ -114,6 +136,7 @@ function MainTabs() {
 function LoadingScreen() {
   return (
     <View style={styles.loadingContainer}>
+      <View style={styles.loadingGlow} />
       <ActivityIndicator size="large" color={colors.primary} />
     </View>
   );
@@ -128,7 +151,13 @@ export function AppNavigator() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
+          animation: 'fade',
+        }}
+      >
         {session ? (
           <>
             <Stack.Screen name="MainTabs" component={MainTabs} />
@@ -179,5 +208,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.background,
+  },
+  loadingGlow: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primaryGlow,
+  },
+  tabIconActive: {
+    backgroundColor: `${colors.primary}15`,
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: -4,
   },
 });

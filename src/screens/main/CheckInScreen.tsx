@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius } from '../../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { colors, spacing, fontSize, borderRadius, shadows } from '../../constants/theme';
 import { useAuthStore } from '../../store/authStore';
 import { useCheckInStore } from '../../store/checkInStore';
 import { Site, CheckIn } from '../../types/database';
@@ -27,9 +29,6 @@ export function CheckInScreen() {
     checkOut,
   } = useCheckInStore();
 
-  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-
-  // Filter sites with check-in enabled
   const checkInEnabledSites = userSites.filter((site) => site.check_in_enabled);
 
   useEffect(() => {
@@ -42,6 +41,7 @@ export function CheckInScreen() {
   const handleCheckIn = async (site: Site) => {
     if (!user) return;
 
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       'Check-in',
       `Confirmer votre arrivée sur le site "${site.name}" ?`,
@@ -52,8 +52,10 @@ export function CheckInScreen() {
           onPress: async () => {
             const { error } = await checkIn(user.id, site.id);
             if (error) {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
               Alert.alert('Erreur', error.message);
             } else {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert('Succès', `Vous êtes maintenant enregistré sur ${site.name}`);
             }
           },
@@ -67,6 +69,7 @@ export function CheckInScreen() {
 
     const site = userSites.find((s) => s.id === currentCheckIn.site_id);
 
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       'Check-out',
       `Confirmer votre départ du site "${site?.name || 'inconnu'}" ?`,
@@ -77,8 +80,10 @@ export function CheckInScreen() {
           onPress: async () => {
             const { error } = await checkOut(user.id);
             if (error) {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
               Alert.alert('Erreur', error.message);
             } else {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert('Succès', 'Check-out effectué avec succès');
             }
           },
@@ -87,7 +92,8 @@ export function CheckInScreen() {
     );
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (user) {
       fetchCurrentCheckIn(user.id);
       fetchCheckInHistory(user.id);
@@ -130,10 +136,10 @@ export function CheckInScreen() {
 
     return (
       <View style={[styles.historyItem, isActive && styles.historyItemActive]}>
-        <View style={styles.historyIcon}>
+        <View style={[styles.historyIcon, isActive && styles.historyIconActive]}>
           <Ionicons
             name={isActive ? 'location' : 'time-outline'}
-            size={20}
+            size={18}
             color={isActive ? colors.success : colors.textSecondary}
           />
         </View>
@@ -148,7 +154,12 @@ export function CheckInScreen() {
           <Text style={[styles.durationText, isActive && styles.durationTextActive]}>
             {calculateDuration(item.checked_in_at, item.checked_out_at)}
           </Text>
-          {isActive && <Text style={styles.activeLabel}>Actif</Text>}
+          {isActive && (
+            <View style={styles.activeBadge}>
+              <View style={styles.activeDot} />
+              <Text style={styles.activeLabel}>Actif</Text>
+            </View>
+          )}
         </View>
       </View>
     );
@@ -162,12 +173,13 @@ export function CheckInScreen() {
         style={[styles.siteCard, isCurrentSite && styles.siteCardActive]}
         onPress={() => !isCurrentSite && handleCheckIn(item)}
         disabled={isCurrentSite}
+        activeOpacity={0.7}
       >
         <View style={[styles.siteIcon, isCurrentSite && styles.siteIconActive]}>
           <Ionicons
             name={isCurrentSite ? 'checkmark-circle' : 'business'}
-            size={24}
-            color={isCurrentSite ? colors.surface : colors.textSecondary}
+            size={22}
+            color={isCurrentSite ? '#FFFFFF' : colors.textSecondary}
           />
         </View>
         <View style={styles.siteInfo}>
@@ -183,7 +195,7 @@ export function CheckInScreen() {
             <Text style={styles.currentBadgeText}>Présent</Text>
           </View>
         ) : (
-          <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
+          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
         )}
       </TouchableOpacity>
     );
@@ -196,7 +208,12 @@ export function CheckInScreen() {
           <Text style={styles.title}>Check-in</Text>
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="location-outline" size={64} color={colors.textLight} />
+          <View style={styles.emptyIconWrapper}>
+            <View style={styles.emptyIconGlow} />
+            <View style={styles.emptyIcon}>
+              <Ionicons name="location-outline" size={48} color={colors.textMuted} />
+            </View>
+          </View>
           <Text style={styles.emptyTitle}>Aucun site disponible</Text>
           <Text style={styles.emptySubtitle}>
             Le check-in n'est pas activé sur vos sites assignés.
@@ -219,28 +236,44 @@ export function CheckInScreen() {
           <>
             {/* Current status */}
             {currentCheckIn && currentSite && (
-              <View style={styles.currentStatusCard}>
-                <View style={styles.statusHeader}>
-                  <View style={styles.statusDot} />
-                  <Text style={styles.statusLabel}>Actuellement sur site</Text>
-                </View>
-                <Text style={styles.currentSiteName}>{currentSite.name}</Text>
-                <Text style={styles.checkInTime}>
-                  Depuis {formatTime(currentCheckIn.checked_in_at)} •{' '}
-                  {calculateDuration(currentCheckIn.checked_in_at, null)}
-                </Text>
-                <TouchableOpacity style={styles.checkOutButton} onPress={handleCheckOut}>
-                  <Ionicons name="exit-outline" size={20} color={colors.surface} />
-                  <Text style={styles.checkOutButtonText}>Check-out</Text>
-                </TouchableOpacity>
+              <View style={styles.currentStatusWrapper}>
+                <LinearGradient
+                  colors={[colors.success, '#16A34A']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.currentStatusCard}
+                >
+                  <View style={styles.statusHeader}>
+                    <View style={styles.statusPulse}>
+                      <View style={styles.statusDot} />
+                    </View>
+                    <Text style={styles.statusLabel}>Actuellement sur site</Text>
+                  </View>
+                  <Text style={styles.currentSiteName}>{currentSite.name}</Text>
+                  <Text style={styles.checkInTime}>
+                    Depuis {formatTime(currentCheckIn.checked_in_at)} •{' '}
+                    {calculateDuration(currentCheckIn.checked_in_at, null)}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.checkOutButton}
+                    onPress={handleCheckOut}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="exit-outline" size={20} color="#FFFFFF" />
+                    <Text style={styles.checkOutButtonText}>Check-out</Text>
+                  </TouchableOpacity>
+                </LinearGradient>
               </View>
             )}
 
             {/* Site selection */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                {currentCheckIn ? 'Changer de site' : 'Sélectionner un site'}
-              </Text>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="business" size={18} color={colors.primary} />
+                <Text style={styles.sectionTitle}>
+                  {currentCheckIn ? 'Changer de site' : 'Sélectionner un site'}
+                </Text>
+              </View>
               {checkInEnabledSites.map((site) => (
                 <View key={site.id}>
                   {renderSiteItem({ item: site })}
@@ -251,12 +284,20 @@ export function CheckInScreen() {
             {/* History */}
             {checkInHistory.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Historique récent</Text>
-                {checkInHistory.slice(0, 10).map((item) => (
-                  <View key={item.id}>
-                    {renderHistoryItem({ item })}
-                  </View>
-                ))}
+                <View style={styles.sectionHeader}>
+                  <Ionicons name="time" size={18} color={colors.accent} />
+                  <Text style={styles.sectionTitle}>Historique récent</Text>
+                </View>
+                <View style={styles.historyCard}>
+                  {checkInHistory.slice(0, 10).map((item, index) => (
+                    <View
+                      key={item.id}
+                      style={index < checkInHistory.slice(0, 10).length - 1 && styles.historyItemBorder}
+                    >
+                      {renderHistoryItem({ item })}
+                    </View>
+                  ))}
+                </View>
               </View>
             )}
           </>
@@ -267,9 +308,11 @@ export function CheckInScreen() {
             refreshing={isLoading}
             onRefresh={handleRefresh}
             tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
         contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
   );
@@ -281,15 +324,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    padding: spacing.lg,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   title: {
     fontSize: fontSize.xxl,
     fontWeight: 'bold',
     color: colors.text,
+    letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: fontSize.sm,
@@ -299,33 +341,46 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: spacing.md,
   },
-  currentStatusCard: {
-    backgroundColor: colors.success,
-    borderRadius: borderRadius.lg,
-    padding: spacing.lg,
+  currentStatusWrapper: {
     marginBottom: spacing.lg,
+    borderRadius: borderRadius.xl,
+    overflow: 'hidden',
+    ...shadows.lg,
+  },
+  currentStatusCard: {
+    padding: spacing.lg,
   },
   statusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.surface,
+  statusPulse: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: spacing.sm,
+  },
+  statusDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
   },
   statusLabel: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: fontSize.sm,
+    fontWeight: '500',
   },
   currentSiteName: {
-    color: colors.surface,
-    fontSize: fontSize.xl,
+    color: '#FFFFFF',
+    fontSize: fontSize.xl + 2,
     fontWeight: 'bold',
     marginBottom: spacing.xs,
+    letterSpacing: -0.3,
   },
   checkInTime: {
     color: 'rgba(255,255,255,0.8)',
@@ -337,31 +392,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   checkOutButtonText: {
-    color: colors.surface,
+    color: '#FFFFFF',
     fontSize: fontSize.md,
     fontWeight: '600',
   },
   section: {
     marginBottom: spacing.lg,
   },
-  sectionTitle: {
-    fontSize: fontSize.md,
-    fontWeight: '600',
-    color: colors.text,
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
     marginBottom: spacing.sm,
     paddingHorizontal: spacing.xs,
+  },
+  sectionTitle: {
+    fontSize: fontSize.sm,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   siteCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
@@ -373,8 +437,8 @@ const styles = StyleSheet.create({
   siteIcon: {
     width: 44,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.background,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.md,
@@ -393,39 +457,49 @@ const styles = StyleSheet.create({
   siteAddress: {
     fontSize: fontSize.sm,
     color: colors.textSecondary,
-    marginTop: spacing.xs,
+    marginTop: 2,
   },
   currentBadge: {
     backgroundColor: colors.success,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
   },
   currentBadgeText: {
-    color: colors.surface,
+    color: '#FFFFFF',
     fontSize: fontSize.xs,
     fontWeight: '600',
+  },
+  historyCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
   },
   historyItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
+  },
+  historyItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
   historyItemActive: {
-    borderLeftWidth: 3,
-    borderLeftColor: colors.success,
+    backgroundColor: `${colors.success}08`,
   },
   historyIcon: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.background,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceElevated,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.md,
+  },
+  historyIconActive: {
+    backgroundColor: `${colors.success}15`,
   },
   historyInfo: {
     flex: 1,
@@ -438,7 +512,7 @@ const styles = StyleSheet.create({
   historyTime: {
     fontSize: fontSize.xs,
     color: colors.textSecondary,
-    marginTop: spacing.xs,
+    marginTop: 2,
   },
   historyDuration: {
     alignItems: 'flex-end',
@@ -451,10 +525,22 @@ const styles = StyleSheet.create({
   durationTextActive: {
     color: colors.success,
   },
+  activeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+  },
+  activeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.success,
+  },
   activeLabel: {
     fontSize: fontSize.xs,
     color: colors.success,
-    marginTop: spacing.xs,
+    fontWeight: '500',
   },
   emptyContainer: {
     flex: 1,
@@ -462,16 +548,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.xl,
   },
+  emptyIconWrapper: {
+    position: 'relative',
+    marginBottom: spacing.lg,
+  },
+  emptyIconGlow: {
+    position: 'absolute',
+    top: -20,
+    left: -20,
+    right: -20,
+    bottom: -20,
+    borderRadius: 60,
+    backgroundColor: `${colors.textMuted}15`,
+  },
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.surfaceElevated,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
   emptyTitle: {
     fontSize: fontSize.xl,
     fontWeight: 'bold',
     color: colors.text,
-    marginTop: spacing.lg,
     marginBottom: spacing.sm,
   },
   emptySubtitle: {
     fontSize: fontSize.md,
     color: colors.textSecondary,
     textAlign: 'center',
+    lineHeight: 22,
   },
 });

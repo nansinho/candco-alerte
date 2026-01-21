@@ -9,21 +9,35 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, borderRadius, roleLabels } from '../../constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { colors, spacing, fontSize, borderRadius, roleLabels, shadows } from '../../constants/theme';
 import { useAuthStore } from '../../store/authStore';
 
 export function ProfileScreen() {
   const { profile, userSites, signOut } = useAuthStore();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       'Déconnexion',
       'Êtes-vous sûr de vouloir vous déconnecter ?',
       [
         { text: 'Annuler', style: 'cancel' },
-        { text: 'Déconnexion', style: 'destructive', onPress: signOut },
+        {
+          text: 'Déconnexion',
+          style: 'destructive',
+          onPress: async () => {
+            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            signOut();
+          },
+        },
       ]
     );
+  };
+
+  const handleMenuPress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const getInitials = () => {
@@ -32,80 +46,167 @@ export function ProfileScreen() {
     return (first + last).toUpperCase() || '?';
   };
 
+  const getRoleColor = () => {
+    switch (profile?.role) {
+      case 'super_admin':
+        return '#FF3B30';
+      case 'admin':
+        return '#8B5CF6';
+      case 'site_manager':
+        return '#3B82F6';
+      case 'sst':
+        return '#22C55E';
+      default:
+        return colors.textSecondary;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header with Avatar */}
         <View style={styles.header}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{getInitials()}</Text>
+          <View style={styles.avatarWrapper}>
+            <View style={styles.avatarGlow} />
+            <LinearGradient
+              colors={['#FF3B30', '#FF6B6B']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.avatar}
+            >
+              <Text style={styles.avatarText}>{getInitials()}</Text>
+            </LinearGradient>
           </View>
           <Text style={styles.name}>
             {profile?.first_name || ''} {profile?.last_name || ''}
           </Text>
           <Text style={styles.email}>{profile?.email}</Text>
-          <View style={styles.roleBadge}>
-            <Text style={styles.roleText}>
+          <View style={[styles.roleBadge, { backgroundColor: `${getRoleColor()}20` }]}>
+            <View style={[styles.roleIndicator, { backgroundColor: getRoleColor() }]} />
+            <Text style={[styles.roleText, { color: getRoleColor() }]}>
               {roleLabels[profile?.role || 'employee']}
             </Text>
           </View>
         </View>
 
+        {/* Sites Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mes sites</Text>
-          {userSites.length > 0 ? (
-            userSites.map((site) => (
-              <View key={site.id} style={styles.siteItem}>
-                <Ionicons name="business" size={20} color={colors.textSecondary} />
-                <View style={styles.siteInfo}>
-                  <Text style={styles.siteName}>{site.name}</Text>
-                  {site.address && (
-                    <Text style={styles.siteAddress}>{site.address}</Text>
-                  )}
+          <View style={styles.sectionHeader}>
+            <Ionicons name="business" size={18} color={colors.primary} />
+            <Text style={styles.sectionTitle}>Mes sites</Text>
+          </View>
+          <View style={styles.card}>
+            {userSites.length > 0 ? (
+              userSites.map((site, index) => (
+                <View
+                  key={site.id}
+                  style={[
+                    styles.siteItem,
+                    index < userSites.length - 1 && styles.siteItemBorder,
+                  ]}
+                >
+                  <View style={styles.siteIconWrapper}>
+                    <Ionicons name="location" size={18} color={colors.primary} />
+                  </View>
+                  <View style={styles.siteInfo}>
+                    <Text style={styles.siteName}>{site.name}</Text>
+                    {site.address && (
+                      <Text style={styles.siteAddress}>{site.address}</Text>
+                    )}
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
                 </View>
+              ))
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons name="alert-circle-outline" size={32} color={colors.textMuted} />
+                <Text style={styles.noSites}>Aucun site assigné</Text>
+                <Text style={styles.noSitesHint}>Contactez votre administrateur</Text>
               </View>
-            ))
-          ) : (
-            <Text style={styles.noSites}>Aucun site assigné</Text>
-          )}
+            )}
+          </View>
         </View>
 
+        {/* Contact Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact</Text>
-          {profile?.phone ? (
-            <View style={styles.infoRow}>
-              <Ionicons name="call" size={20} color={colors.textSecondary} />
-              <Text style={styles.infoText}>{profile.phone}</Text>
-            </View>
-          ) : (
-            <Text style={styles.noInfo}>Numéro de téléphone non renseigné</Text>
-          )}
+          <View style={styles.sectionHeader}>
+            <Ionicons name="call" size={18} color={colors.success} />
+            <Text style={styles.sectionTitle}>Contact</Text>
+          </View>
+          <View style={styles.card}>
+            {profile?.phone ? (
+              <View style={styles.contactRow}>
+                <View style={styles.contactIconWrapper}>
+                  <Ionicons name="phone-portrait" size={18} color={colors.success} />
+                </View>
+                <Text style={styles.contactText}>{profile.phone}</Text>
+              </View>
+            ) : (
+              <View style={styles.emptyState}>
+                <Text style={styles.noInfo}>Numéro non renseigné</Text>
+              </View>
+            )}
+          </View>
         </View>
 
+        {/* Settings Section */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="notifications-outline" size={24} color={colors.text} />
-            <Text style={styles.menuItemText}>Notifications</Text>
-            <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
-          </TouchableOpacity>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="settings" size={18} color={colors.accent} />
+            <Text style={styles.sectionTitle}>Paramètres</Text>
+          </View>
+          <View style={styles.card}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={handleMenuPress}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconWrapper, { backgroundColor: `${colors.warning}15` }]}>
+                <Ionicons name="notifications" size={18} color={colors.warning} />
+              </View>
+              <Text style={styles.menuItemText}>Notifications</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="help-circle-outline" size={24} color={colors.text} />
-            <Text style={styles.menuItemText}>Aide</Text>
-            <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={handleMenuPress}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconWrapper, { backgroundColor: `${colors.info}15` }]}>
+                <Ionicons name="help-circle" size={18} color={colors.info} />
+              </View>
+              <Text style={styles.menuItemText}>Aide</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="document-text-outline" size={24} color={colors.text} />
-            <Text style={styles.menuItemText}>Conditions d'utilisation</Text>
-            <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.menuItem, styles.menuItemLast]}
+              onPress={handleMenuPress}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconWrapper, { backgroundColor: `${colors.textSecondary}15` }]}>
+                <Ionicons name="document-text" size={18} color={colors.textSecondary} />
+              </View>
+              <Text style={styles.menuItemText}>Conditions d'utilisation</Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Ionicons name="log-out-outline" size={24} color={colors.error} />
-          <Text style={styles.signOutText}>Déconnexion</Text>
+        {/* Sign Out Button */}
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={handleSignOut}
+          activeOpacity={0.7}
+        >
+          <View style={styles.signOutContent}>
+            <Ionicons name="log-out-outline" size={22} color={colors.error} />
+            <Text style={styles.signOutText}>Déconnexion</Text>
+          </View>
         </TouchableOpacity>
 
+        {/* Version */}
         <Text style={styles.version}>CandCO Alerte v1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
@@ -119,65 +220,106 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    padding: spacing.xl,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+  avatarWrapper: {
+    position: 'relative',
     marginBottom: spacing.md,
   },
+  avatarGlow: {
+    position: 'absolute',
+    top: -10,
+    left: -10,
+    right: -10,
+    bottom: -10,
+    borderRadius: 60,
+    backgroundColor: colors.primaryGlow,
+  },
+  avatar: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...shadows.lg,
+  },
   avatarText: {
-    fontSize: fontSize.xxl,
+    fontSize: fontSize.xxl + 4,
     fontWeight: 'bold',
-    color: colors.surface,
+    color: '#FFFFFF',
   },
   name: {
-    fontSize: fontSize.xl,
+    fontSize: fontSize.xl + 2,
     fontWeight: 'bold',
     color: colors.text,
     marginBottom: spacing.xs,
+    letterSpacing: -0.3,
   },
   email: {
     fontSize: fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
   },
   roleBadge: {
-    backgroundColor: colors.secondary,
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
+    gap: spacing.xs,
+  },
+  roleIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   roleText: {
-    color: colors.surface,
     fontSize: fontSize.sm,
     fontWeight: '600',
   },
   section: {
-    backgroundColor: colors.surface,
     marginTop: spacing.md,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+    marginLeft: spacing.xs,
   },
   sectionTitle: {
     fontSize: fontSize.sm,
     fontWeight: '600',
     color: colors.textSecondary,
     textTransform: 'uppercase',
-    marginBottom: spacing.md,
+    letterSpacing: 0.5,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
   },
   siteItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    padding: spacing.md,
     gap: spacing.sm,
+  },
+  siteItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  siteIconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    backgroundColor: `${colors.primary}15`,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   siteInfo: {
     flex: 1,
@@ -185,51 +327,89 @@ const styles = StyleSheet.create({
   siteName: {
     fontSize: fontSize.md,
     color: colors.text,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   siteAddress: {
     fontSize: fontSize.sm,
     color: colors.textSecondary,
+    marginTop: 2,
+  },
+  emptyState: {
+    alignItems: 'center',
+    padding: spacing.xl,
+    gap: spacing.xs,
   },
   noSites: {
-    fontSize: fontSize.sm,
-    color: colors.textLight,
-    fontStyle: 'italic',
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    fontWeight: '500',
   },
-  infoRow: {
+  noSitesHint: {
+    fontSize: fontSize.sm,
+    color: colors.textMuted,
+  },
+  contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: spacing.md,
     gap: spacing.sm,
   },
-  infoText: {
+  contactIconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    backgroundColor: `${colors.success}15`,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contactText: {
     fontSize: fontSize.md,
     color: colors.text,
+    fontWeight: '500',
   },
   noInfo: {
     fontSize: fontSize.sm,
-    color: colors.textLight,
-    fontStyle: 'italic',
+    color: colors.textMuted,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.md,
+    padding: spacing.md,
+    gap: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    gap: spacing.sm,
+  },
+  menuItemLast: {
+    borderBottomWidth: 0,
+  },
+  menuIconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   menuItemText: {
     flex: 1,
     fontSize: fontSize.md,
     color: colors.text,
+    fontWeight: '500',
   },
   signOutButton: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+    backgroundColor: `${colors.error}10`,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: `${colors.error}30`,
+    overflow: 'hidden',
+  },
+  signOutContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.sm,
-    padding: spacing.lg,
-    marginTop: spacing.lg,
+    padding: spacing.md,
   },
   signOutText: {
     fontSize: fontSize.md,
@@ -239,7 +419,8 @@ const styles = StyleSheet.create({
   version: {
     textAlign: 'center',
     fontSize: fontSize.xs,
-    color: colors.textLight,
+    color: colors.textMuted,
+    marginTop: spacing.lg,
     marginBottom: spacing.xl,
   },
 });
