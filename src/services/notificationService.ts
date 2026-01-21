@@ -8,9 +8,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
+    shouldSetBadge: false,
   }),
 });
 
@@ -43,7 +41,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500],
       lightColor: '#FF0000',
-      sound: 'alert_fire.wav',
       enableVibrate: true,
       enableLights: true,
     });
@@ -54,7 +51,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500, 200, 500],
       lightColor: '#EF4444',
-      sound: 'alert_fire.wav',
     });
 
     await Notifications.setNotificationChannelAsync('alert-accident', {
@@ -62,7 +58,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500],
       lightColor: '#F59E0B',
-      sound: 'alert_accident.wav',
     });
 
     await Notifications.setNotificationChannelAsync('alert-medical', {
@@ -70,7 +65,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500],
       lightColor: '#3B82F6',
-      sound: 'alert_medical.wav',
     });
 
     await Notifications.setNotificationChannelAsync('alert-other', {
@@ -78,7 +72,6 @@ export async function requestNotificationPermissions(): Promise<boolean> {
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 500, 200, 500],
       lightColor: '#6B7280',
-      sound: 'alert_other.wav',
     });
   }
 
