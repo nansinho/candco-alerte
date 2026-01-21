@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,10 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useAuthStore } from '../store/authStore';
 import { colors } from '../constants/theme';
+import { AlertType } from '../types/database';
+
+// Navigation ref for external navigation
+export const navigationRef = React.createRef<NavigationContainerRef<RootStackParamList>>();
 
 // Auth screens
 import { LoginScreen } from '../screens/auth/LoginScreen';
@@ -14,11 +18,14 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 // Main screens
 import { SOSScreen } from '../screens/main/SOSScreen';
 import { ProfileScreen } from '../screens/main/ProfileScreen';
+import { CheckInScreen } from '../screens/main/CheckInScreen';
 
 // Alert screens
 import { AlertsListScreen } from '../screens/alerts/AlertsListScreen';
 import { CreateAlertScreen } from '../screens/alerts/CreateAlertScreen';
 import { AlertSentScreen } from '../screens/alerts/AlertSentScreen';
+import { AlertDetailScreen } from '../screens/alerts/AlertDetailScreen';
+import { ActiveAlertScreen } from '../screens/alerts/ActiveAlertScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -26,11 +33,18 @@ export type RootStackParamList = {
   CreateAlert: { location?: { latitude: number; longitude: number } };
   AlertSent: { alertId?: string; alertType: string };
   AlertDetail: { alertId: string };
+  ActiveAlert: {
+    alertId: string;
+    alertType: AlertType;
+    siteName: string;
+    location?: string;
+  };
 };
 
 export type TabParamList = {
   SOS: undefined;
   Alerts: undefined;
+  CheckIn: undefined;
   Profile: undefined;
 };
 
@@ -50,6 +64,9 @@ function MainTabs() {
               break;
             case 'Alerts':
               iconName = focused ? 'notifications' : 'notifications-outline';
+              break;
+            case 'CheckIn':
+              iconName = focused ? 'location' : 'location-outline';
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
@@ -81,6 +98,11 @@ function MainTabs() {
         options={{ tabBarLabel: 'Alertes' }}
       />
       <Tab.Screen
+        name="CheckIn"
+        component={CheckInScreen}
+        options={{ tabBarLabel: 'Check-in' }}
+      />
+      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{ tabBarLabel: 'Profil' }}
@@ -105,7 +127,7 @@ export function AppNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {session ? (
           <>
@@ -124,6 +146,22 @@ export function AppNavigator() {
               options={{
                 presentation: 'modal',
                 gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="AlertDetail"
+              component={AlertDetailScreen}
+              options={{
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen
+              name="ActiveAlert"
+              component={ActiveAlertScreen}
+              options={{
+                presentation: 'fullScreenModal',
+                gestureEnabled: false,
+                animation: 'fade',
               }}
             />
           </>
