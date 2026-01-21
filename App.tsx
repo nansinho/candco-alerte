@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { AppNavigator, navigationRef } from './src/navigation/AppNavigator';
 import { useAuthStore } from './src/store/authStore';
 import { AlertType } from './src/types/database';
@@ -63,9 +64,18 @@ function AppContent() {
       });
     }
 
+    // Get project ID from expo config (works in production builds)
+    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+
+    if (!projectId) {
+      // Skip push token registration in Expo Go / development
+      console.log('Push tokens: Skipping in development mode (no projectId)');
+      return;
+    }
+
     try {
       const token = await Notifications.getExpoPushTokenAsync({
-        projectId: 'candco-alerte', // Replace with your Expo project ID
+        projectId,
       });
 
       if (token.data) {
@@ -117,7 +127,7 @@ function AppContent() {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <AppNavigator />
     </>
   );
