@@ -427,7 +427,6 @@ const styles = StyleSheet.create({
   inputWrapperFocused: {
     borderColor: colors.primary,
     backgroundColor: colors.surfaceElevated,
-    ...shadows.glow(colors.primaryGlow),
   },
   inputIcon: {
     marginRight: spacing.sm,
