@@ -1,0 +1,67 @@
+{
+  "expo": {
+    "name": "CandCO Alerte",
+    "slug": "candco-alerte",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "candco-alerte",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#DC2626"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.candco.alerte",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "L'app utilise votre position pour localiser les alertes d'urgence.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "L'app utilise votre position pour localiser les alertes d'urgence.",
+        "NSCameraUsageDescription": "L'app utilise la caméra pour joindre des photos aux alertes.",
+        "NSPhotoLibraryUsageDescription": "L'app accède à vos photos pour les joindre aux alertes."
+      }
+    },
+    "android": {
+      "package": "com.candco.alerte",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#DC2626"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "L'app utilise votre position pour localiser les alertes d'urgence."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "L'app accède à vos photos pour les joindre aux alertes.",
+          "cameraPermission": "L'app utilise la caméra pour joindre des photos aux alertes."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sounds": ["./assets/sounds/alert-fire.wav", "./assets/sounds/alert-medical.wav", "./assets/sounds/alert-accident.wav", "./assets/sounds/alert-other.wav"]
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
