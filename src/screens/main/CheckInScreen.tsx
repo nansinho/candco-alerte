@@ -345,8 +345,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     borderRadius: borderRadius.xl,
     overflow: 'hidden',
-    ...shadows.lg,
-  },
+      },
   currentStatusCard: {
     padding: spacing.lg,
   },

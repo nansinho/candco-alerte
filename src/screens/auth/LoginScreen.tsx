@@ -383,8 +383,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     overflow: 'hidden',
-    ...shadows.lg,
-  },
+      },
   logoGradient: {
     flex: 1,
     justifyContent: 'center',
@@ -444,8 +443,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
-    ...shadows.lg,
-  },
+      },
   button: {
     flexDirection: 'row',
     alignItems: 'center',

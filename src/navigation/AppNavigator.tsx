@@ -96,7 +96,6 @@ function MainTabs() {
           paddingTop: 8,
           paddingBottom: Platform.OS === 'ios' ? 24 : 8,
           height: Platform.OS === 'ios' ? 88 : 64,
-          ...shadows.sm,
         },
         tabBarLabelStyle: {
           fontSize: 11,

@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     minWidth: 32,
     alignItems: 'center',
-    ...shadows.sm,
+    
   },
   countText: {
     color: '#FFFFFF',
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.border,
-    ...shadows.md,
+    
   },
   alertGlow: {
     position: 'absolute',

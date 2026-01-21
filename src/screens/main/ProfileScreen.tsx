@@ -242,8 +242,7 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.lg,
-  },
+      },
   avatarText: {
     fontSize: fontSize.xxl + 4,
     fontWeight: 'bold',
