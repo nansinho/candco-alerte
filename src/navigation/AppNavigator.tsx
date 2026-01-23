@@ -20,18 +20,12 @@ import { AlertsListScreen } from '../screens/alerts/AlertsListScreen';
 import { CreateAlertScreen } from '../screens/alerts/CreateAlertScreen';
 import { AlertSentScreen } from '../screens/alerts/AlertSentScreen';
 
-// Formation screens
-import { SessionRegistrationScreen } from '../screens/formations/SessionRegistrationScreen';
-import { RegistrationSuccessScreen } from '../screens/formations/RegistrationSuccessScreen';
-
 export type RootStackParamList = {
   Auth: undefined;
   MainTabs: { screen?: string } | undefined;
   CreateAlert: { location?: { latitude: number; longitude: number } };
   AlertSent: { alertId?: string; alertType: string };
   AlertDetail: { alertId: string };
-  SessionRegistration: { formationId: string; formationTitle: string };
-  RegistrationSuccess: { registrationId?: string };
 };
 
 export type TabParamList = {
@@ -127,22 +121,6 @@ export function AppNavigator() {
             <Stack.Screen
               name="AlertSent"
               component={AlertSentScreen}
-              options={{
-                presentation: 'modal',
-                gestureEnabled: false,
-              }}
-            />
-            <Stack.Screen
-              name="SessionRegistration"
-              component={SessionRegistrationScreen}
-              options={{
-                presentation: 'modal',
-                animation: 'slide_from_bottom',
-              }}
-            />
-            <Stack.Screen
-              name="RegistrationSuccess"
-              component={RegistrationSuccessScreen}
               options={{
                 presentation: 'modal',
                 gestureEnabled: false,
