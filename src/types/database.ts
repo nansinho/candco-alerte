@@ -2,6 +2,12 @@ export type AlertType = 'fire' | 'accident' | 'medical' | 'other';
 export type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'cancelled';
 export type UserRole = 'super_admin' | 'admin' | 'site_manager' | 'sst' | 'employee';
 
+// Formation/Training types
+export type FormationType = 'securite' | 'prevention' | 'technique' | 'management';
+export type FinancingMode = 'fonds_propres' | 'opco' | 'cpf' | 'entreprise' | 'autre';
+export type RegistrationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type SessionSelectionType = 'scheduled' | 'proposed';
+
 export interface Database {
   public: {
     Tables: {
@@ -310,8 +316,143 @@ export interface Database {
           checked_out_at?: string | null;
         };
       };
+      formations: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          type: FormationType;
+          duration_hours: number;
+          duration_days: number;
+          price: number;
+          is_certifying: boolean;
+          image_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          type: FormationType;
+          duration_hours: number;
+          duration_days: number;
+          price: number;
+          is_certifying?: boolean;
+          image_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string | null;
+          type?: FormationType;
+          duration_hours?: number;
+          duration_days?: number;
+          price?: number;
+          is_certifying?: boolean;
+          image_url?: string | null;
+          updated_at?: string;
+        };
+      };
+      scheduled_sessions: {
+        Row: {
+          id: string;
+          formation_id: string;
+          start_date: string;
+          end_date: string;
+          location: string;
+          address: string | null;
+          available_spots: number;
+          max_spots: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          formation_id: string;
+          start_date: string;
+          end_date: string;
+          location: string;
+          address?: string | null;
+          available_spots: number;
+          max_spots: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          formation_id?: string;
+          start_date?: string;
+          end_date?: string;
+          location?: string;
+          address?: string | null;
+          available_spots?: number;
+          max_spots?: number;
+          updated_at?: string;
+        };
+      };
+      session_registrations: {
+        Row: {
+          id: string;
+          user_id: string;
+          formation_id: string;
+          scheduled_session_id: string | null;
+          selection_type: SessionSelectionType;
+          proposed_start_date: string | null;
+          proposed_end_date: string | null;
+          financing_mode: FinancingMode;
+          financing_details: string | null;
+          message: string | null;
+          needs_analysis: NeedsAnalysis | null;
+          status: RegistrationStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          formation_id: string;
+          scheduled_session_id?: string | null;
+          selection_type: SessionSelectionType;
+          proposed_start_date?: string | null;
+          proposed_end_date?: string | null;
+          financing_mode: FinancingMode;
+          financing_details?: string | null;
+          message?: string | null;
+          needs_analysis?: NeedsAnalysis | null;
+          status?: RegistrationStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          formation_id?: string;
+          scheduled_session_id?: string | null;
+          selection_type?: SessionSelectionType;
+          proposed_start_date?: string | null;
+          proposed_end_date?: string | null;
+          financing_mode?: FinancingMode;
+          financing_details?: string | null;
+          message?: string | null;
+          needs_analysis?: NeedsAnalysis | null;
+          status?: RegistrationStatus;
+          updated_at?: string;
+        };
+      };
     };
   };
+}
+
+// Needs Analysis structure for Qualiopi compliance
+export interface NeedsAnalysis {
+  currentSkillLevel: 'debutant' | 'intermediaire' | 'avance';
+  previousExperience: string;
+  learningObjectives: string;
+  specificConstraints: string;
+  expectedOutcomes: string;
 }
 
 // Helper types for easier usage
@@ -326,6 +467,9 @@ export type Alert = Database['public']['Tables']['alerts']['Row'];
 export type AlertPhoto = Database['public']['Tables']['alert_photos']['Row'];
 export type AlertMessage = Database['public']['Tables']['alert_messages']['Row'];
 export type CheckIn = Database['public']['Tables']['check_ins']['Row'];
+export type Formation = Database['public']['Tables']['formations']['Row'];
+export type ScheduledSession = Database['public']['Tables']['scheduled_sessions']['Row'];
+export type SessionRegistration = Database['public']['Tables']['session_registrations']['Row'];
 
 // Extended types with relations
 export type AlertWithDetails = Alert & {
@@ -336,4 +480,18 @@ export type AlertWithDetails = Alert & {
   created_by_profile?: Profile;
   photos?: AlertPhoto[];
   messages?: AlertMessage[];
+};
+
+export type FormationWithSessions = Formation & {
+  scheduled_sessions?: ScheduledSession[];
+};
+
+export type ScheduledSessionWithFormation = ScheduledSession & {
+  formation?: Formation;
+};
+
+export type SessionRegistrationWithDetails = SessionRegistration & {
+  formation?: Formation;
+  scheduled_session?: ScheduledSession;
+  user?: Profile;
 };
